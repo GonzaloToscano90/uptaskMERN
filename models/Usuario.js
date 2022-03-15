@@ -32,7 +32,7 @@ const usuarioSchema = mongoose.Schema(
       timestamps: true, //crea dos columnas mas: una de creado y otra de actualizado
   }
 );
-// Este codigo con pre() se ejecutara antes de añmacenar el registro en la bd 
+// Este codigo con pre() se ejecutara antes de almacenar el registro en la bd 
 usuarioSchema.pre('save', async function (next){
   if(!this.isModified('password')) { // isModified= funcion de mongoose, revisa que el password no alla sido cambiado
     next(); // te manda al siguiente middelware
