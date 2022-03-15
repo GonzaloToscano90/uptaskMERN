@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-//estructura de la base de datos
+//Schema estructura de la base de datos
 const usuarioSchema = mongoose.Schema(
   {
     nombre: {
