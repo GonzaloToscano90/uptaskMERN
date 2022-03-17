@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";// Libreria para hashear y comprobar los password
 
 //Schema estructura de la base de datos
 const usuarioSchema = mongoose.Schema(
@@ -40,6 +40,11 @@ usuarioSchema.pre('save', async function (next){
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt)
 })
+// funcion que comprueba el password 
+usuarioSchema.methods.comprobarPassword = async function
+(passwordFormulario) {
+  return await bcrypt.compare(passwordFormulario, this.password)
+}
 
 //Definir modelo:
 const Usuario = mongoose.model("Usuario",usuarioSchema);

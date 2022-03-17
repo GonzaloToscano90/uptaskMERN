@@ -31,12 +31,24 @@ const autenticar = async (req, res) => {
       const error = new Error("El usuario no existe")
       return res.status(404).json({msg: error.message})
   }
-  // Comprobar si el usuario esta confirmado
+  // Comprobar si el usuario esta confirmado (Evita los  Bots)
   if(!usuario.confirmado){
     const error = new Error("Tu cuenta no ha sido confirmado")
     return res.status(403).json({msg: error.message})
 }
   // Comprobar su Password
+  if (await usuario.comprobarPassword(password)) {
+    // console.log("Es correcto");
+    res.json({
+      _id: usuario._id, // se crea un objeto para solo traer estos datos (asi lo maneja mongo)
+      nombre: usuario.nombre,
+      email: usuario.email,
+    })
+  } else {
+    const error = new Error("El password es incorrecto")
+    return res.status(403).json({msg: error.message})
+  }
+
 };
 
 export { registrar, autenticar };
