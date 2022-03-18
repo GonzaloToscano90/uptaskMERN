@@ -26,17 +26,17 @@ const registrar = async (req, res) => {
 const autenticar = async (req, res) => {
   const { email, password } = req.body;
   // Comprobar si el usuario existe
-  const usuario = await Usuario.findOne({email});  
-  console.log(usuario)
-  if(!usuario){
-      const error = new Error("El usuario no existe")
-      return res.status(404).json({msg: error.message})
+  const usuario = await Usuario.findOne({ email });
+  console.log(usuario);
+  if (!usuario) {
+    const error = new Error("El usuario no existe");
+    return res.status(404).json({ msg: error.message });
   }
   // Comprobar si el usuario esta confirmado (Evita los  Bots)
-  if(!usuario.confirmado){
-    const error = new Error("Tu cuenta no ha sido confirmado")
-    return res.status(403).json({msg: error.message})
-}
+  if (!usuario.confirmado) {
+    const error = new Error("Tu cuenta no ha sido confirmado");
+    return res.status(403).json({ msg: error.message });
+  }
   // Comprobar su Password
   if (await usuario.comprobarPassword(password)) {
     // console.log("Es correcto");
@@ -45,12 +45,31 @@ const autenticar = async (req, res) => {
       nombre: usuario.nombre,
       email: usuario.email,
       token: generarJWT(usuario._id),
-    })
+    });
   } else {
-    const error = new Error("El password es incorrecto")
-    return res.status(403).json({msg: error.message})
+    const error = new Error("El password es incorrecto");
+    return res.status(403).json({ msg: error.message });
   }
-
 };
 
-export { registrar, autenticar };
+const confirmar = async (req, res) => {
+  const { token } = req.params; // lee de la url y extrae el valor del token (para despues enviarselo al usuario por correo)
+  const usuarioConfirmar = await Usuario.findOne({ token }); // Buscamos a un usuario con ese token
+  //si no existe : token no valido
+  if (!usuarioConfirmar) {
+    const error = new Error("Token no valido");
+    return res.status(403).json({ msg: error.message });
+  }
+// si existe: confirmamos el token con true y eliminamos el token con '' por que es de un solo uso por seguridad
+  try {
+    usuarioConfirmar.confirmado = true;
+    usuarioConfirmar.token = '';
+    await usuarioConfirmar.save(); // almacena en la bd con estos cambios.
+    res.json({ msg: "Usuario Confirmado correctamente"})
+    // console.log(usuarioConfirmar)
+  } catch (error) {
+    console.log(error)
+  }
+};
+
+export { registrar, autenticar, confirmar };
