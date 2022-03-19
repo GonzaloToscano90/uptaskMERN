@@ -60,16 +60,34 @@ const confirmar = async (req, res) => {
     const error = new Error("Token no valido");
     return res.status(403).json({ msg: error.message });
   }
-// si existe: confirmamos el token con true y eliminamos el token con '' por que es de un solo uso por seguridad
+  // si existe: confirmamos el token con true y eliminamos el token con '' por que es de un solo uso por seguridad
   try {
     usuarioConfirmar.confirmado = true;
-    usuarioConfirmar.token = '';
+    usuarioConfirmar.token = "";
     await usuarioConfirmar.save(); // almacena en la bd con estos cambios.
-    res.json({ msg: "Usuario Confirmado correctamente"})
+    res.json({ msg: "Usuario Confirmado correctamente" });
     // console.log(usuarioConfirmar)
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
-export { registrar, autenticar, confirmar };
+const olvidePassword = async (req, res) => {
+  const { email } = req.body;
+  const usuario = await Usuario.findOne({ email });
+  console.log(usuario);
+  if (!usuario) {
+    const error = new Error("El usuario no existe");
+    return res.status(404).json({ msg: error.message });
+  }
+  try {
+    usuario.token = generarId()
+    // console.log(usuario)
+    await usuario.save();
+    res.json({ msg: "Hemos enviado un email con las instrucciones"})
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { registrar, autenticar, confirmar, olvidePassword };
