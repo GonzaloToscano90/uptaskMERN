@@ -8,7 +8,7 @@ import {
   comprobarToken,
   nuevoPassword,
   perfil,
-  
+
 } from "../controllers/usuarioController.js";
 
 
@@ -24,6 +24,6 @@ router.post("/olvide-password", olvidePassword);
 // Estos dos codigos comentados arriba se pueden simplificar asi:
 router.route("/olvide-password/:token").get(comprobarToken).post(nuevoPassword);
 
-router.get('/perfil', checkAuth, perfil);
+router.get('/perfil', checkAuth, perfil); //checkAuth verifica q el jwt sea valido, q exista, q sea enviado via header,y todas las comprobaciones
 
 export default router;
