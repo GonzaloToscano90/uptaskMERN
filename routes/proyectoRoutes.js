@@ -9,7 +9,7 @@ import {
     agregarColaborador,
     eliminarColaborador,
     obtenerTareas,
-} from "../controllers/proyectoController"
+} from "../controllers/proyectoController.js"
 import checkAuth from "../middleware/checkAuth.js";
 
 const router = express.Router();
